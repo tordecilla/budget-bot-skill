@@ -1,0 +1,14 @@
+{
+  "name": "budget-bot",
+  "owner": {
+    "name": "Jaemark Tordecilla",
+    "url": "https://github.com/tordecilla"
+  },
+  "plugins": [
+    {
+      "name": "budget-bot",
+      "source": ".",
+      "description": "Build and query Philippine GAA and NEP budget spreadsheet files."
+    }
+  ]
+}

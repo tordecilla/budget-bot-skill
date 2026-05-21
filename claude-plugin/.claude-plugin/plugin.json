@@ -1,0 +1,20 @@
+{
+  "name": "budget-bot",
+  "displayName": "Budget Bot",
+  "version": "0.2.0",
+  "description": "Build and query Philippine GAA and NEP budget spreadsheet files.",
+  "author": {
+    "name": "Jaemark Tordecilla",
+    "url": "https://github.com/tordecilla"
+  },
+  "repository": "https://github.com/tordecilla/budget-bot-skill",
+  "license": "GPL-3.0-or-later",
+  "keywords": [
+    "philippines",
+    "budget",
+    "gaa",
+    "dbm",
+    "sqlite"
+  ],
+  "skills": "./skills/"
+}

@@ -1,0 +1,3 @@
+display_name: Budget Bot
+short_description: Build and query GAA budget databases.
+default_prompt: Use this skill to ingest Philippine GAA XLSX files, build SQLite budget databases, generate lookup JSONs, and answer Budget Bot-style budget questions with transparent filters.

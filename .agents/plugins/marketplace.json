@@ -1,0 +1,20 @@
+{
+  "name": "budget-bot",
+  "interface": {
+    "displayName": "Budget Bot"
+  },
+  "plugins": [
+    {
+      "name": "budget-bot",
+      "source": {
+        "source": "local",
+        "path": "./plugins/budget-bot"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Data"
+    }
+  ]
+}

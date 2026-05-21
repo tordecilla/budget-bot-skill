@@ -1,0 +1,36 @@
+{
+  "name": "budget-bot",
+  "version": "0.2.0",
+  "description": "Build and query Philippine GAA and NEP budget spreadsheet files.",
+  "author": {
+    "name": "Jaemark Tordecilla",
+    "url": "https://github.com/tordecilla"
+  },
+  "repository": "https://github.com/tordecilla/budget-bot-skill",
+  "license": "GPL-3.0-or-later",
+  "keywords": [
+    "philippines",
+    "budget",
+    "gaa",
+    "dbm",
+    "sqlite"
+  ],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Budget Bot",
+    "shortDescription": "Build SQLite budget databases and query Philippine budget data.",
+    "longDescription": "Budget Bot ingests Philippine GAA and NEP budget XLSX files, builds year-specific SQLite databases, generates department and agency lookup JSONs, and gives agents reusable instructions for transparent budget analysis.",
+    "developerName": "Jaemark Tordecilla",
+    "category": "Data",
+    "capabilities": [
+      "Write",
+      "Automation"
+    ],
+    "websiteURL": "https://github.com/tordecilla/budget-bot-skill",
+    "defaultPrompt": [
+      "Start the Budget Bot setup.",
+      "Build budget SQLite databases from raw XLSX files.",
+      "Generate lookup JSONs for this budget project."
+    ]
+  }
+}
