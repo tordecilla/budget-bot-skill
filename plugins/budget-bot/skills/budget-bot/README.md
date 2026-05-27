@@ -1,70 +1,72 @@
 # Budget Bot Skill
 
-Use this skill for Philippine GAA/NEP budget spreadsheet files. It builds SQLite databases, generates lookup JSONs, and creates a project-level data profile.
+Use this skill for Philippine GAA/NEP budget spreadsheet files. It builds SQLite databases, generates Markdown lookups, and creates a project-level data profile.
 
-Current version: `0.2.0`
+Current version: `0.2.1`
+
+## Requirements
+
+- Python 3.10 or newer.
+- Python's standard `sqlite3` module, which is included with normal Python installs.
+- Python package dependencies listed in `requirements.txt`.
+
+Install Python package dependencies:
+
+```sh
+python -m pip install -r skills/budget-bot/requirements.txt
+```
+
+PowerShell:
+
+```powershell
+python -m pip install -r skills\budget-bot\requirements.txt
+```
 
 ## Install
 
-### Codex
+Install the skill by placing this folder somewhere your coding agent can read it. These examples use only shell commands; adjust the destination to match your agent's skill directory.
 
-Add the GitHub repo as a Codex plugin marketplace:
-
-```sh
-codex plugin marketplace add tordecilla/budget-bot-skill
-```
-
-Install the plugin:
+POSIX shell:
 
 ```sh
-codex plugin add budget-bot@budget-bot
+SKILL_DIR="${BUDGET_BOT_SKILL_DIR:-$HOME/.local/share/skills/budget-bot}"
+mkdir -p "$(dirname "$SKILL_DIR")"
+cp -R skills/budget-bot "$SKILL_DIR"
 ```
 
-Restart Codex after installation, then invoke the `budget-bot` skill by asking the agent to start setup.
+PowerShell:
 
-### Claude Code
-
-Add the GitHub repo as a Claude Code plugin marketplace:
-
-```text
-/plugin marketplace add tordecilla/budget-bot-skill
+```powershell
+$SkillDir = if ($env:BUDGET_BOT_SKILL_DIR) { $env:BUDGET_BOT_SKILL_DIR } else { Join-Path $HOME ".local\share\skills\budget-bot" }
+New-Item -ItemType Directory -Force -Path (Split-Path -Parent $SkillDir) | Out-Null
+Copy-Item -Recurse -Force -Path skills\budget-bot -Destination $SkillDir
 ```
 
-Install the plugin:
-
-```text
-/plugin install budget-bot@budget-bot
-```
-
-Restart Claude Code, then invoke:
-
-```text
-/budget-bot
-```
+Then point your agent at the installed `SKILL.md` or ask it to use the `budget-bot` skill if it auto-discovers skills from that directory.
 
 ## Update
 
-### Codex
-
-Refresh the marketplace snapshot and reinstall the plugin:
+Refresh your local repository, then copy the skill folder again.
 
 ```sh
-codex plugin marketplace upgrade budget-bot
-codex plugin remove budget-bot
-codex plugin add budget-bot@budget-bot
+git pull
+SKILL_DIR="${BUDGET_BOT_SKILL_DIR:-$HOME/.local/share/skills/budget-bot}"
+rm -rf "$SKILL_DIR"
+mkdir -p "$(dirname "$SKILL_DIR")"
+cp -R skills/budget-bot "$SKILL_DIR"
 ```
 
-Restart Codex after the update if prompted.
+PowerShell:
 
-### Claude Code
-
-Update the installed plugin:
-
-```text
-/plugin update budget-bot@budget-bot
+```powershell
+git pull
+$SkillDir = if ($env:BUDGET_BOT_SKILL_DIR) { $env:BUDGET_BOT_SKILL_DIR } else { Join-Path $HOME ".local\share\skills\budget-bot" }
+if (Test-Path -LiteralPath $SkillDir) { Remove-Item -LiteralPath $SkillDir -Recurse -Force }
+New-Item -ItemType Directory -Force -Path (Split-Path -Parent $SkillDir) | Out-Null
+Copy-Item -Recurse -Force -Path skills\budget-bot -Destination $SkillDir
 ```
 
-Restart Claude Code after the update if prompted.
+Restart or reload your agent if it caches skill files.
 
 ## Setup
 
@@ -85,7 +87,7 @@ The agent should:
 1. Create the project folders.
 2. Check for official budget XLSX files under `raw/xlsx/`.
 3. Build one SQLite database per year.
-4. Generate department/agency lookup JSONs.
+4. Generate department/agency Markdown lookups.
 5. Create or update `BUDGET_BOT_PROJECT.md`.
 6. Validate that the SQLite tables can be queried.
 
@@ -96,7 +98,7 @@ If no XLSX files are present, the agent should create the folders and tell the u
 ```text
 raw/xlsx/     official GAA, NEP, or other budget XLSX files
 sqlite/       generated year-specific SQLite databases
-lookups/      generated department/agency lookup JSON files
+lookups/      generated department/agency Markdown lookup files
 reports/      generated analysis outputs
 ```
 
@@ -113,7 +115,7 @@ python /path/to/budget-bot/scripts/build_budget_sqlite.py --xlsx-dir raw/xlsx --
 Generate lookups:
 
 ```sh
-python /path/to/budget-bot/scripts/build_department_agency_lookup.py --sqlite-dir sqlite --output lookups/department_agency_lookup.json
+python /path/to/budget-bot/scripts/build_department_agency_lookup.py --sqlite-dir sqlite --output lookups/department_agency_lookup.md
 ```
 
 ## Project Profile
@@ -122,7 +124,7 @@ Create or update `BUDGET_BOT_PROJECT.md` with:
 
 - available budget years and source files,
 - default year behavior,
-- lookup JSON paths,
+- lookup Markdown paths,
 - known project-local agency or department notes.
 
 Reusable investigation rules live in `references/budget_bot_instructions.md`.

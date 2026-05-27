@@ -8,19 +8,26 @@ This instruction set is spreadsheet-only. Ignore PDF workflows unless the user e
 
 Use official DBM budget XLSX files under `raw/xlsx/` as the source of truth. Generated SQLite files are derived working copies.
 
-Use lookup JSON files under `lookups/` to resolve exact department and agency names before querying. Prefer project-local generated lookups because they reflect the labels present in the local data. Use any master department/agency lookup as a secondary reference for name variants.
+Use Markdown lookup files under `lookups/` to resolve exact department and agency names before querying. Prefer project-local generated lookups because they reflect the labels present in the local data. Use any master department/agency lookup as a secondary reference for name variants.
+
+The project-local lookup entry point is `lookups/department_agency_lookup.md`. Year-specific files use `lookups/department_agency_lookup_YYYY.md`.
+
+Do not use a helper script merely to find lookup files. Check the project-local `lookups/` path directly.
 
 Do not treat generated SQLite outputs as official sources. Cite the raw source file behind each result.
 
 ## Before Querying
 
+Use plain language in all user-facing communication. The expected audience is non-technical journalists, so avoid database jargon when a clear everyday phrase is available. When technical terms such as table, column, filter, SQLite, or `AMT` are necessary, briefly explain them in context.
+
 Before answering department or agency questions:
 
-- Read the project-local lookup when present.
+- Load lookups in a gated way: search the lookup index and relevant year-specific file first, then read only matching sections and nearby lines.
 - Determine the exact `UACS_DPT_DSC` or `UACS_AGY_DSC` value first. Do not guess.
 - Check for relevant name variants or multiple forms in the lookup and source data.
 - If the user's term is an abbreviation, partial name, old name, or informal name, show the possible matching source labels before querying.
 - Use all relevant exact source labels when the lookup or data shows multiple valid forms.
+- Read full year lookup files only when targeted search is insufficient.
 
 Before running each query, explain:
 
@@ -140,6 +147,8 @@ For totals and displayed monetary values:
 - Include row counts and total sums when helpful for auditability.
 
 ## Answers
+
+Write plainly for non-technical journalists. Lead with the finding, then give the source year, records searched, filters used, and any caveats. Avoid unexplained SQL, schema, or programming terms in final answers. If a technical detail matters for trust, explain it briefly in ordinary language.
 
 Each answer should include:
 

@@ -1,6 +1,12 @@
 # Budget Bot Query Contract
 
-Use exact budget labels from the lookup JSON or actual SQLite data before filtering departments or agencies.
+Use exact budget labels from the project-local Markdown lookup files or actual SQLite data before filtering departments or agencies.
+
+Lookup entry point: `lookups/department_agency_lookup.md`. Year-specific lookup files: `lookups/department_agency_lookup_YYYY.md`.
+
+Load lookups in a gated way. Search the index and relevant year file for the user's term first, then read only matching sections and nearby lines unless broader lookup context is needed.
+
+Use plain language in all user-facing communication. The expected audience is non-technical journalists. Lead with the finding, avoid unexplained database jargon, and briefly explain technical terms when they are needed for trust.
 
 Default to the latest available year when the user does not specify a year. Do not compare multiple years unless the user asks.
 
