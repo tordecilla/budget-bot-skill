@@ -25,4 +25,6 @@ Use `AMT * 1000` for full-peso values. Keep source `AMT` in mind as thousands of
 
 Use exact equality for `UACS_DPT_DSC`, `UACS_AGY_DSC`, `UACS_EXP_DSC`, and `UACS_FUNDSUBCAT_DSC` after resolving names. Use text search for `DSC`, `UACS_OPER_DSC`, and object descriptions.
 
+Generated databases may include ordinary indexes for exact-match fields and a `budget_rows_fts` full-text search table for topic fields. Use `budget_rows_fts MATCH ...` for free-text topic searches when available, joining back to `budget_rows` on `rowid`.
+
 

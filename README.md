@@ -2,7 +2,7 @@
 
 Use this skill for Philippine GAA/NEP budget spreadsheet files. It builds SQLite databases, generates Markdown lookups, and creates a project-level data profile.
 
-Current version: `0.2.1`
+Current version: `0.2.2`
 
 ## Requirements
 
@@ -111,6 +111,8 @@ Build all XLSX files in `raw/xlsx/`:
 ```sh
 python /path/to/budget-bot/scripts/build_budget_sqlite.py --xlsx-dir raw/xlsx --sqlite-dir sqlite
 ```
+
+The importer creates `budget_rows`, indexes exact-match budget fields when present, and creates `budget_rows_fts` for full-text searches over available topic fields such as `DSC`, `UACS_OPER_DSC`, `UACS_SOBJ_DSC`, and `UACS_OBJ_DSC`.
 
 Generate lookups:
 

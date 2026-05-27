@@ -83,6 +83,8 @@ Use case-insensitive text search for free-text or semi-structured fields such as
 - `UACS_OPER_DSC`
 - object description fields when the user gives a partial topic
 
+Generated databases may include a `budget_rows_fts` full-text search table for these fields. Prefer `budget_rows_fts MATCH ...` for topic searches when the table exists, then join matching `rowid` values back to `budget_rows` to retrieve source fields and amounts.
+
 For infrastructure or project questions, search both `DSC` and `UACS_OPER_DSC`.
 
 For line-item object questions, search the object description field available for that year.

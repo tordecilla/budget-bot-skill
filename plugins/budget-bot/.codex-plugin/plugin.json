@@ -1,6 +1,6 @@
 {
   "name": "budget-bot",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "Build and query Philippine GAA and NEP budget spreadsheet files.",
   "author": {
     "name": "Jaemark Tordecilla",

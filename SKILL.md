@@ -5,7 +5,7 @@ description: Build and query Philippine budget datasets from GAA/NEP budget spre
 
 # Budget Bot
 
-Version: `0.2.1`
+Version: `0.2.2`
 
 ## Overview
 
@@ -66,7 +66,12 @@ For ambiguous filenames, import the file individually with:
 - `--sqlite`
 - `--year`
 
-The importer creates a single `budget_rows` table with original spreadsheet columns plus SQLite's implicit `rowid`. It does not add helper columns such as `source_year`, `source_file`, `source_row_number`, or `AMT_PHP`.
+The importer creates a `budget_rows` table with original spreadsheet columns plus SQLite's implicit `rowid`. It also adds query support without changing source rows:
+
+- indexes on exact-match fields when present: `UACS_DPT_DSC`, `UACS_AGY_DSC`, `UACS_EXP_DSC`, `UACS_FUNDSUBCAT_DSC`, `UACS_REG_ID`, object codes, and object descriptions
+- a `budget_rows_fts` full-text search table over available topic fields: `DSC`, `UACS_OPER_DSC`, `UACS_SOBJ_DSC`, and `UACS_OBJ_DSC`
+
+It does not add helper columns such as `source_year`, `source_file`, `source_row_number`, or `AMT_PHP`.
 
 ## Generate Lookups
 
@@ -118,6 +123,8 @@ For free-text topics, search relevant text fields:
 - `DSC`
 - `UACS_OPER_DSC`
 - object description field
+
+When `budget_rows_fts` exists, use it for these free-text searches and join back to `budget_rows` by `rowid` for amounts and source fields.
 
 Normalize object fields across years:
 
