@@ -6,6 +6,7 @@ from __future__ import annotations
 import argparse
 import re
 import sqlite3
+from datetime import datetime, timezone
 from pathlib import Path
 
 from openpyxl.reader import excel as xlsx_reader
@@ -29,6 +30,8 @@ TEXT_SEARCH_COLUMNS = [
     "UACS_SOBJ_DSC",
     "UACS_OBJ_DSC",
 ]
+
+SOURCE_COLUMNS = ["source_row"]
 
 
 def qident(name: str) -> str:
@@ -67,6 +70,33 @@ def cell_value(value: object) -> object:
     return "" if value is None else value
 
 
+def utc_now_text() -> str:
+    return datetime.now(timezone.utc).replace(microsecond=0).isoformat()
+
+
+def append_conversion_log(
+    log_path: Path,
+    *,
+    year: int,
+    xlsx: Path,
+    sqlite_path: Path,
+    sheet_name: str,
+    row_count: int,
+    blank_row_count: int,
+) -> None:
+    log_path.parent.mkdir(parents=True, exist_ok=True)
+    with log_path.open("a", encoding="utf-8") as log:
+        log.write(f"Converted at UTC: {utc_now_text()}\n")
+        log.write(f"Year: {year}\n")
+        log.write(f"Source XLSX: {xlsx}\n")
+        log.write(f"Source sheet: {sheet_name}\n")
+        log.write("Header row: 1\n")
+        log.write(f"SQLite output: {sqlite_path}\n")
+        log.write(f"Rows imported: {row_count}\n")
+        log.write(f"Blank rows skipped: {blank_row_count}\n")
+        log.write("\n")
+
+
 def add_query_support(cur: sqlite3.Cursor, headers: list[str]) -> None:
     header_set = set(headers)
     for column in EXACT_MATCH_COLUMNS:
@@ -95,7 +125,13 @@ def add_query_support(cur: sqlite3.Cursor, headers: list[str]) -> None:
     )
 
 
-def build_one(xlsx: Path, sqlite_path: Path, year: int, force: bool = False) -> None:
+def build_one(
+    xlsx: Path,
+    sqlite_path: Path,
+    year: int,
+    force: bool = False,
+    log_path: Path | None = None,
+) -> None:
     if sqlite_path.exists() and not force:
         raise FileExistsError(f"SQLite exists; pass --force to replace: {sqlite_path}")
 
@@ -104,25 +140,30 @@ def build_one(xlsx: Path, sqlite_path: Path, year: int, force: bool = False) -> 
     load_xlsx_file = getattr(xlsx_reader, "load_work" + "book")
     xlsx_file = load_xlsx_file(xlsx, read_only=True, data_only=True)
     sheet = xlsx_file[xlsx_file.sheetnames[0]]
+    sheet_name = sheet.title
     rows = sheet.iter_rows(values_only=True)
     headers = [clean_header(value, index + 1) for index, value in enumerate(next(rows))]
+    table_headers = headers + SOURCE_COLUMNS
 
     conn = sqlite3.connect(sqlite_path)
     cur = conn.cursor()
     cur.execute("DROP TABLE IF EXISTS budget_rows")
-    columns_sql = ", ".join(f"{qident(header)} TEXT" for header in headers)
+    columns_sql = ", ".join(f"{qident(header)} TEXT" for header in table_headers)
     cur.execute(f"CREATE TABLE budget_rows ({columns_sql})")
-    insert_sql = f"INSERT INTO budget_rows ({', '.join(qident(h) for h in headers)}) VALUES ({', '.join('?' for _ in headers)})"
+    insert_sql = f"INSERT INTO budget_rows ({', '.join(qident(h) for h in table_headers)}) VALUES ({', '.join('?' for _ in table_headers)})"
 
     row_count = 0
+    blank_row_count = 0
     batch: list[list[object]] = []
-    for row in rows:
+    for source_row, row in enumerate(rows, start=2):
         values = list(row[: len(headers)])
         if len(values) < len(headers):
             values.extend([None] * (len(headers) - len(values)))
         if all(value is None or value == "" for value in values):
+            blank_row_count += 1
             continue
         cleaned = [cell_value(value) for value in values]
+        cleaned.append(source_row)
         batch.append(cleaned)
         row_count += 1
         if len(batch) >= 5000:
@@ -136,6 +177,17 @@ def build_one(xlsx: Path, sqlite_path: Path, year: int, force: bool = False) -> 
     conn.commit()
     conn.close()
     xlsx_file.close()
+
+    if log_path is not None:
+        append_conversion_log(
+            log_path,
+            year=year,
+            xlsx=xlsx,
+            sqlite_path=sqlite_path,
+            sheet_name=sheet_name,
+            row_count=row_count,
+            blank_row_count=blank_row_count,
+        )
 
     print(f"{year}: {xlsx} -> {sqlite_path} ({row_count:,} rows)")
 
@@ -151,22 +203,25 @@ def main() -> None:
     parser.add_argument("--sqlite", type=Path, help="SQLite path for single-file import.")
     parser.add_argument("--sqlite-dir", type=Path, default=Path("sqlite"), help="Output directory for batch imports.")
     parser.add_argument("--year", type=int, help="Budget year for single-file import.")
+    parser.add_argument("--log-dir", type=Path, default=Path("logs/conversions"), help="Directory for conversion logs.")
     parser.add_argument("--force", action="store_true", help="Replace existing outputs.")
     args = parser.parse_args()
 
     if bool(args.xlsx) == bool(args.xlsx_dir):
         raise SystemExit("Pass exactly one of --xlsx or --xlsx-dir.")
 
+    log_path = args.log_dir / f"build_budget_sqlite_{datetime.now(timezone.utc).strftime('%Y%m%dT%H%M%SZ')}.log"
+
     if args.xlsx:
         year = infer_year(args.xlsx, args.year)
         sqlite_path = args.sqlite or sqlite_name_for(args.xlsx, year, args.sqlite_dir)
-        build_one(args.xlsx, sqlite_path, year, args.force)
+        build_one(args.xlsx, sqlite_path, year, args.force, log_path)
         return
 
     for xlsx in iter_xlsx_files(args.xlsx_dir):
         year = infer_year(xlsx)
         sqlite_path = sqlite_name_for(xlsx, year, args.sqlite_dir)
-        build_one(xlsx, sqlite_path, year, args.force)
+        build_one(xlsx, sqlite_path, year, args.force, log_path)
 
 
 if __name__ == "__main__":

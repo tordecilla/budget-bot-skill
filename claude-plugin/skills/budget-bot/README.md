@@ -112,7 +112,9 @@ Build all XLSX files in `raw/xlsx/`:
 python /path/to/budget-bot/scripts/build_budget_sqlite.py --xlsx-dir raw/xlsx --sqlite-dir sqlite
 ```
 
-The importer creates `budget_rows`, indexes exact-match budget fields when present, and creates `budget_rows_fts` for full-text searches over available topic fields such as `DSC`, `UACS_OPER_DSC`, `UACS_SOBJ_DSC`, and `UACS_OBJ_DSC`.
+The importer creates `budget_rows`, appends `source_row` to identify the original Excel row number, indexes exact-match budget fields when present, and creates `budget_rows_fts` for full-text searches over available topic fields such as `DSC`, `UACS_OPER_DSC`, `UACS_SOBJ_DSC`, and `UACS_OBJ_DSC`.
+
+By default, each import writes a timestamped conversion log under `logs/conversions/`. The log records the source XLSX path, imported sheet, header row, SQLite output path, imported row count, and blank row count. Use `--log-dir` to place conversion logs elsewhere.
 
 Generate lookups:
 

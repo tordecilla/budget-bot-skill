@@ -71,7 +71,13 @@ The importer creates a `budget_rows` table with original spreadsheet columns plu
 - indexes on exact-match fields when present: `UACS_DPT_DSC`, `UACS_AGY_DSC`, `UACS_EXP_DSC`, `UACS_FUNDSUBCAT_DSC`, `UACS_REG_ID`, object codes, and object descriptions
 - a `budget_rows_fts` full-text search table over available topic fields: `DSC`, `UACS_OPER_DSC`, `UACS_SOBJ_DSC`, and `UACS_OBJ_DSC`
 
-It does not add helper columns such as `source_year`, `source_file`, `source_row_number`, or `AMT_PHP`.
+The importer appends one minimal source-location column to each row:
+
+- `source_row`: Excel row number for the imported record
+
+It also writes a timestamped conversion log under `logs/conversions/` by default. The log records the source XLSX path, imported sheet, header row, SQLite output path, imported row count, and blank row count.
+
+It does not add helper columns such as `source_year`, `source_file`, or `AMT_PHP`.
 
 ## Generate Lookups
 
