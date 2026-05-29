@@ -5,7 +5,7 @@ description: Build and query Philippine budget datasets from GAA/NEP budget spre
 
 # Budget Bot
 
-Version: `0.2.2`
+Version: `0.2.3`
 
 ## Overview
 
@@ -33,10 +33,10 @@ Do not install dependencies for simple queries against existing SQLite databases
 
 When the user asks to set up or prepare a Budget Bot project, do the work end to end. Do not stop at listing commands unless the user explicitly asks for instructions only.
 
-1. Create `raw/xlsx/`, `sqlite/`, `lookups/`, `reports/`, `logs/`, and `data/` when missing.
-2. Ask the user to download the relevant budget XLSX files from DBM's budget page (`https://www.dbm.gov.ph/index.php/budget`) and place them under `raw/xlsx/` when the files are not already available locally.
-3. If downloaded files are elsewhere on disk, copy or move official XLSX files into `raw/xlsx/` after confirming source paths when needed.
-4. Inspect `raw/xlsx/` before importing; if a filename does not make the budget year obvious, import that file individually with an explicit `--year`.
+1. Create `raw/`, `sqlite/`, `lookups/`, `reports/`, `logs/`, and `data/` when missing.
+2. Ask the user to download the relevant budget XLSX files from DBM's budget page (`https://www.dbm.gov.ph/index.php/budget`) and place them under `raw/` when the files are not already available locally.
+3. If downloaded files are elsewhere on disk, copy or move official XLSX files into `raw/` after confirming source paths when needed.
+4. Inspect `raw/` before importing; if a filename does not make the budget year obvious, import that file individually with an explicit `--year`.
 5. Build one SQLite database per year with the bundled `scripts/build_budget_sqlite.py`, resolved relative to this skill directory.
 6. Generate Markdown lookups with the bundled `scripts/build_department_agency_lookup.py`, resolved relative to this skill directory.
 7. Create or update `BUDGET_BOT_PROJECT.md` when the project lacks one.
@@ -57,7 +57,7 @@ Use bundled script `scripts/build_budget_sqlite.py`. Resolve it relative to this
 
 For straightforward filenames, batch import with:
 
-- `--xlsx-dir raw/xlsx`
+- `--xlsx-dir raw`
 - `--sqlite-dir sqlite`
 
 For ambiguous filenames, import the file individually with:

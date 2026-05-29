@@ -6,7 +6,7 @@ This instruction set is spreadsheet-only. Ignore PDF workflows unless the user e
 
 ## Sources
 
-Use official DBM budget XLSX files under `raw/xlsx/` as the source of truth. Generated SQLite files are derived working copies.
+Use official DBM budget XLSX files under `raw/` as the source of truth. Generated SQLite files are derived working copies.
 
 Use Markdown lookup files under `lookups/` to resolve exact department and agency names before querying. Prefer project-local generated lookups because they reflect the labels present in the local data. Use any master department/agency lookup as a secondary reference for name variants.
 

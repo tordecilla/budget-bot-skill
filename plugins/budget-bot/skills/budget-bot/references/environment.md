@@ -45,14 +45,14 @@ POSIX shell:
 
 ```sh
 export BUDGET_BOT_SKILL_DIR="/path/to/budget-bot"
-python "$BUDGET_BOT_SKILL_DIR/scripts/build_budget_sqlite.py" --xlsx-dir raw/xlsx --sqlite-dir sqlite
+python "$BUDGET_BOT_SKILL_DIR/scripts/build_budget_sqlite.py" --xlsx-dir raw --sqlite-dir sqlite
 ```
 
 PowerShell:
 
 ```powershell
 $env:BUDGET_BOT_SKILL_DIR = "C:\path\to\budget-bot"
-python "$env:BUDGET_BOT_SKILL_DIR\scripts\build_budget_sqlite.py" --xlsx-dir raw\xlsx --sqlite-dir sqlite
+python "$env:BUDGET_BOT_SKILL_DIR\scripts\build_budget_sqlite.py" --xlsx-dir raw --sqlite-dir sqlite
 ```
 
 If the agent is explicitly pointed at a project-local skill folder, resolve bundled scripts relative to that loaded `SKILL.md` path.

@@ -2,7 +2,7 @@
 
 Use this skill for Philippine GAA/NEP budget spreadsheet files. It builds SQLite databases, generates Markdown lookups, and creates a project-level data profile.
 
-Current version: `0.2.2`
+Current version: `0.2.3`
 
 ## Requirements
 
@@ -70,7 +70,7 @@ Restart or reload your agent if it caches skill files.
 
 ## Setup
 
-Before asking the agent to run setup, download the needed budget documents from DBM and place the XLSX files in `raw/xlsx/`:
+Before asking the agent to run setup, download the needed budget documents from DBM and place the XLSX files in `raw/`:
 
 ```text
 https://www.dbm.gov.ph/index.php/budget
@@ -85,18 +85,18 @@ Start the setup.
 The agent should:
 
 1. Create the project folders.
-2. Check for official budget XLSX files under `raw/xlsx/`.
+2. Check for official budget XLSX files under `raw/`.
 3. Build one SQLite database per year.
 4. Generate department/agency Markdown lookups.
 5. Create or update `BUDGET_BOT_PROJECT.md`.
 6. Validate that the SQLite tables can be queried.
 
-If no XLSX files are present, the agent should create the folders and tell the user to place the DBM budget XLSX files in `raw/xlsx/`.
+If no XLSX files are present, the agent should create the folders and tell the user to place the DBM budget XLSX files in `raw/`.
 
 ## Project Folders
 
 ```text
-raw/xlsx/     official GAA, NEP, or other budget XLSX files
+raw/          official GAA, NEP, or other budget XLSX files
 sqlite/       generated year-specific SQLite databases
 lookups/      generated department/agency Markdown lookup files
 reports/      generated analysis outputs
@@ -106,10 +106,10 @@ reports/      generated analysis outputs
 
 Manual commands are for debugging or running without an agent. Replace `/path/to/budget-bot` with the installed skill path.
 
-Build all XLSX files in `raw/xlsx/`:
+Build all XLSX files in `raw/`:
 
 ```sh
-python /path/to/budget-bot/scripts/build_budget_sqlite.py --xlsx-dir raw/xlsx --sqlite-dir sqlite
+python /path/to/budget-bot/scripts/build_budget_sqlite.py --xlsx-dir raw --sqlite-dir sqlite
 ```
 
 The importer creates `budget_rows`, appends `source_row` to identify the original Excel row number, indexes exact-match budget fields when present, and creates `budget_rows_fts` for full-text searches over available topic fields such as `DSC`, `UACS_OPER_DSC`, `UACS_SOBJ_DSC`, and `UACS_OBJ_DSC`.
